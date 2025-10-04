@@ -513,13 +513,20 @@ static PSDP_OPTION getAttributesList(char*urlSafeAddr) {
                 AudioPacketDuration = 10;
             }
             else {
+                if(StreamConfig.audioPreferPassthrough){
+                    // AC3 uses 32ms packet size
+                    AudioPacketDuration = 32;
+                }
                 // Use 5 ms packets by default for lowest latency
-                AudioPacketDuration = 5;
+                else AudioPacketDuration = 5;
             }
         }
 
         snprintf(payloadStr, sizeof(payloadStr), "%d", AudioPacketDuration);
         err |= addAttributeString(&optionHead, "x-nv-aqos.packetDuration", payloadStr);
+
+        snprintf(payloadStr, sizeof(payloadStr), "%d", StreamConfig.audioPreferPassthrough);
+        err |= addAttributeString(&optionHead, "x-nv-audio.passthrough", payloadStr);
     }
     else {
         // 5 ms duration for legacy servers

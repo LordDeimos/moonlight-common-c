@@ -164,7 +164,10 @@ static void decodeInputData(PQUEUED_AUDIO_PACKET packet) {
     // packet. Trigger packet loss concealment logic in libopus by
     // invoking the decoder with a NULL buffer.
     if (packet->header.size == 0) {
-        AudioCallbacks.decodeAndPlaySample(NULL, 0);
+        if(StreamConfig.audioPreferPassthrough){
+            AudioCallbacks.playSample(NULL, 0);
+        }
+        else AudioCallbacks.decodeAndPlaySample(NULL, 0);
         return;
     }
 
@@ -214,8 +217,10 @@ static void decodeInputData(PQUEUED_AUDIO_PACKET packet) {
             LC_ASSERT_VT(decryptedOpusData[0] == opusHeaderByte || IS_SUNSHINE());
         }
 #endif
-
-        AudioCallbacks.decodeAndPlaySample((char*)decryptedOpusData, dataLength);
+        if(StreamConfig.audioPreferPassthrough){
+            AudioCallbacks.playSample((char*)decryptedOpusData, dataLength);
+        }
+        else AudioCallbacks.decodeAndPlaySample((char*)decryptedOpusData, dataLength);
     }
     else {
 #ifdef LC_DEBUG
@@ -232,7 +237,10 @@ static void decodeInputData(PQUEUED_AUDIO_PACKET packet) {
         }
 #endif
 
-        AudioCallbacks.decodeAndPlaySample((char*)(rtp + 1), packet->header.size - sizeof(*rtp));
+        if(StreamConfig.audioPreferPassthrough){
+            AudioCallbacks.playSample((char*)(rtp + 1), packet->header.size - sizeof(*rtp));
+        }
+        else AudioCallbacks.decodeAndPlaySample((char*)(rtp + 1), packet->header.size - sizeof(*rtp));
     }
 }
 

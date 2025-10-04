@@ -70,6 +70,9 @@ typedef struct _STREAM_CONFIGURATION {
     // See AUDIO_CONFIGURATION constants and MAKE_AUDIO_CONFIGURATION() below.
     int audioConfiguration;
 
+    // Bypass opus and use AC3 encoding
+    bool audioPreferPassthrough;
+
     // Specifies the mask of supported video formats.
     // See VIDEO_FORMAT constants below.
     int supportedVideoFormats;
@@ -357,7 +360,7 @@ typedef struct _AUDIO_RENDERER_CALLBACKS {
     AudioRendererStart start;
     AudioRendererStop stop;
     AudioRendererCleanup cleanup;
-    AudioRendererDecodeAndPlaySample decodeAndPlaySample;
+    AudioRendererDecodeAndPlaySample decodeAndPlaySample, playSample;
     int capabilities;
 } AUDIO_RENDERER_CALLBACKS, *PAUDIO_RENDERER_CALLBACKS;
 
